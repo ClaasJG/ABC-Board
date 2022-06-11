@@ -1,0 +1,94 @@
+{
+    "parameterSets": {
+        "ABC Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "false",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]"
+        },
+        "ABC Two Hand Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "true",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]",
+            "RightHandle": "true"
+        },
+        "ABC Left Hand Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "true",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]"
+        },
+        "ABC Right Hand Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "false",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]",
+            "RightHandle": "true"
+        },
+        "123 Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "false",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]"
+        },
+        "123 Two Hand Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "true",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]",
+            "RightHandle": "true"
+        },
+        "123 Left Hand Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "true",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]"
+        },
+        "123 Right Hand Stardos": {
+            "FontName": "Stardos Stencil:style=Bold",
+            "LeftHandle": "false",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]",
+            "RightHandle": "true"
+        },
+
+        "ABC Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "false",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]"
+        },
+        "ABC Two Hand Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "true",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]",
+            "RightHandle": "true"
+        },
+        "ABC Left Hand Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "true",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]"
+        },
+        "ABC Right Hand Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "false",
+            "Lines": "[\"ABCDEFG\", \"HIJKLMN\", \"OPQRSTU\", \"VWXYZ\"]",
+            "RightHandle": "true"
+        },
+        "123 Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "false",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]"
+        },
+        "123 Two Hand Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "true",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]",
+            "RightHandle": "true"
+        },
+        "123 Left Hand Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "true",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]"
+        },
+        "123 Right Hand Saira": {
+            "FontName": "Saira Stencil One",
+            "LeftHandle": "false",
+            "Lines": "[\"123+\", \"456-\", \"789*\", \"0 =\/\"]",
+            "RightHandle": "true"
+        }
+    },
+    "fileFormatVersion": "1"
+}

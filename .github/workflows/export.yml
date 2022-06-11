@@ -1,0 +1,136 @@
+name: Generate Outputs
+
+on:
+  push:
+    tags:
+       - '*'
+
+jobs:
+
+  matrix:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }} 
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: set-matrix
+        run: |
+          matrix=$((
+            echo '{ "parameterSet" : '
+            cat ./ABCBoard.json | jq '.parameterSets | keys'
+            echo "}"
+          ) | jq -c .)
+          echo $matrix
+          echo $matrix | jq .
+          echo "::set-output name=matrix::$matrix"
+
+  check-matrix:
+    runs-on: ubuntu-22.04
+    needs: matrix
+    steps:
+      - name: Install json2yaml
+        run: |
+          sudo npm install -g json2yaml
+
+      - name: Check matrix definition
+        run: |
+          matrix='${{ needs.matrix.outputs.matrix }}'
+          echo $matrix
+          echo $matrix | jq .
+          echo $matrix | json2yaml
+
+  export-files:
+    runs-on: ubuntu-22.04
+    needs: matrix
+
+    strategy:
+      matrix: ${{fromJson(needs.matrix.outputs.matrix)}}
+
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y openscad blender
+  
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Fonts
+        run: |
+          mkdir -p ~/.fonts/
+          find fonts/ -type f -name '*.ttf' -exec cp --verbose '{}' ~/.fonts/ ';'
+          fc-cache -f -v
+          fc-list -f "%-60{{%{family[0]}%{:style[0]=}}}%{file}\n" | sort
+
+      - name: Generate ${{ matrix.conf.mode }} Files
+        run: |
+          mkdir -p outs
+
+          openscad -v
+
+          modes=(       'ModelBoard'  'ModelBoard'  'Cut'           'Cut'           )
+          extensions=(  'stl'         '3mf'         'dxf'           'svg'           )
+          names=(       'Board Model' 'Board Model' 'Board Cutout'  'Board Cutout'  )
+          logsymbol=(   '💎'          '💎'         '🔪'            '🔪'           )
+
+          info="Exporting differend parts for the given model:"
+
+          for i in "${!modes[@]}"; do
+            name="${{ matrix.parameterSet }} ${names[i]}.${extensions[i]}"
+            info="${info}%0A  ${logsymbol[i]} ${name}"
+            echo "Build: ${name} as ${modes[i]}"
+            openscad -p "ABCBoard.json" -P "${{ matrix.parameterSet }}" -D 'ExportMode="'${modes[i]}'"' -o "outs/${name}" ABCBoard.scad --hardwarnings
+          done
+
+          echo ::notice file=ABCBoard.json,line=$(grep -n "${{ matrix.parameterSet }}" ABCBoard.json | cut -d: -f1),title="${{ matrix.parameterSet }}"::${info}
+
+      - name: Generate ${{ matrix.conf.mode }} Preview
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: |
+            blender .github/RenderEnvironment.blend --background --python-text RenderSignAction.py --python-exit-code 1 -- "./outs" "${{ matrix.parameterSet }}" "./outs/${{ matrix.parameterSet }} Preview.png"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: outs/*
+          retention-days: 1
+
+  create-release:
+    runs-on: ubuntu-22.04
+    needs: export-files
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create release Info
+        run: |
+          baseurl="${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.ref_name }}/"
+
+          echo "## ABC Boards" > readme.md
+          echo "" >> readme.md
+          echo "| Preview | stl | 3mf | dxf | svg |" >> readme.md
+          echo "| ------- | --- | --- | --- | --- |" >> readme.md
+
+          while read name; do
+            dName="$(echo ${name} | tr [:blank:] '.')"
+            file="${baseurl}${dName}"
+            echo "![${name}](${baseurl}${dName}.Preview.png) | [Board stl](${file}.Board.Model.stl) | [Board stl](${file}.Board.Model.3mf) | [Cutout dxf](${file}.Board.Cutout.dxf) | [Cutout svg](${file}.Board.Cutout.svg) |" >> readme.md
+          done <<< $(cat ABCBoard.json | jq -r ".parameterSets | keys_unsorted[]")
+
+      - name: Get Artefacts
+        uses: actions/download-artifact@master
+        with:
+          name: artifacts
+          path: artifacts
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "artifacts/*"
+          bodyFile: "readme.md"
+          token: ${{ secrets.GITHUB_TOKEN }}

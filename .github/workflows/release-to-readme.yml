@@ -1,0 +1,26 @@
+name: Generate readme
+on:
+  release:
+    types: ['created', 'edited']
+
+jobs:
+  generate-readme:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Get Readme
+      run: |
+        curl --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" --url "https://api.github.com/repos/${{ github.repository }}/releases" \
+        | jq -r '.[] | select(.tag_name == "${{ github.ref_name }}") | .body' > readme.md
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
+      with:
+        commit-message: "Update readme.md with release ${{ github.ref_name }} info"
+        branch: "rel_${{ github.ref_name }}_readme"
+        delete-branch: true
+        title: "Update readme.md from release ${{ github.ref_name }}"
+        body: "This replaced the current readme.md file with the body of the latest release ( ${{ github.ref_name }} )"
+        base: "master"

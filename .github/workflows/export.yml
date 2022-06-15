@@ -111,15 +111,15 @@ jobs:
         run: |
           baseurl="${{ github.server_url }}/${{ github.repository }}/releases/download/${{ github.ref_name }}/"
 
-          echo "## ABC Boards" > readme.md
-          echo "" >> readme.md
+          cat ".github/readme-template.md" > readme.md
+
           echo "| Preview | stl | 3mf | dxf | svg |" >> readme.md
           echo "| ------- | --- | --- | --- | --- |" >> readme.md
 
           while read name; do
             dName="$(echo ${name} | tr [:blank:] '.')"
             file="${baseurl}${dName}"
-            echo "![${name}](${baseurl}${dName}.Preview.png) | [Board stl](${file}.Board.Model.stl) | [Board stl](${file}.Board.Model.3mf) | [Cutout dxf](${file}.Board.Cutout.dxf) | [Cutout svg](${file}.Board.Cutout.svg) |" >> readme.md
+            echo "![${name}](${baseurl}${dName}.Preview.png) | [Board stl](${file}.Board.Model.stl) | [Board 3mf](${file}.Board.Model.3mf) | [Cutout dxf](${file}.Board.Cutout.dxf) | [Cutout svg](${file}.Board.Cutout.svg) |" >> readme.md
           done <<< $(cat ABCBoard.json | jq -r ".parameterSets | keys_unsorted[]")
 
       - name: Get Artefacts
